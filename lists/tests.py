@@ -2,6 +2,7 @@ from django.core.urlresolvers import resolve
 from django.http import HttpRequest
 from django.template.loader import render_to_string
 from django.test import TestCase
+from lists.models import Item
 from lists.views import home_page
 
 
@@ -32,3 +33,22 @@ class HomePageTest(TestCase):
 
         self.assertIn('A new list item', response.content.decode())
         self.assertEqual(response.content.decode(), expected_html)
+
+class ItemModelTest(TestCase):
+
+    def testSavingAndRetrievingItems(self):
+        firstItem = Item()
+        firstItem.text = "The first (ever) list item"
+        firstItem.save()
+
+        SecondItem = Item()
+        SecondItem.text = "Item the second"
+        SecondItem.save()
+
+        savedItems = Item.objects.all()
+        self.assertEqual(savedItems.count(), 2)
+
+        firstSavedItem = savedItems[0]
+        secondSavedItem = savedItems[1]
+        self.assertEqual(firstSavedItem.text, "The first (ever) list item")
+        self.assertEqual(secondSavedItem.text, "Item the second")
